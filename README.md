@@ -38,14 +38,16 @@ This script outlines a comprehensive Data Cleaning process performed on the raw 
 
 ## 2. 📈 `Exploring Data.sql`
 
-This script focuses on exploratory data analysis using the cleaned `layoffs_staging2` table to find key layoff trends.
+This script focuses on **exploratory data analysis (EDA)** using the cleaned `layoffs_staging2` table to find key layoff trends.
 
 ### Key Analysis Queries:
 
-| Summary Statistics | Finds the maximum number and maximum percentage of total layoffs. 
-| Top Companies | Calculates the total number of employees laid off by each company and ranks them in descending order. 
-| Yearly Trends | Calculates the total number of layoffs aggregated by the year. 
-| Monthly Trends | Calculates the total number of layoffs aggregated by month (`YYYY-MM`). 
-| Rolling Totals (Time Series) | Uses a Common Table Expression (CTE) and a window function (`SUM() OVER(ORDER BY MONTH)`) to calculate a running (cumulative) total of laid-off employees over time. 
+| Query Type | Description |
+| :--- | :--- |
+| **Summary Statistics** | Finds the maximum number and maximum percentage of total layoffs. |
+| **Top Companies** | Calculates the **total number of employees laid off** by each company and ranks them in descending order. |
+| **Yearly Trends** | Calculates the total number of layoffs aggregated by the **year**. |
+| **Monthly Trends** | Calculates the total number of layoffs aggregated by **month** (`YYYY-MM`). |
+| **Rolling Totals (Time Series)** | Uses a **Common Table Expression (CTE)** and a **window function** (`SUM() OVER(ORDER BY MONTH)`) to calculate a running (cumulative) total of laid-off employees over time. |
 
 
