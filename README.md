@@ -4,7 +4,7 @@ The primary goal of this analysis is to identify trends in job cuts across diffe
 
 ---
 
-## 1. Cleaning Data.sql
+## 1. Cleaning Data
 
 This script outlines a comprehensive Data Cleaning process performed on the raw `layoffs` table to prepare it for analysis.
 
@@ -36,18 +36,70 @@ This script outlines a comprehensive Data Cleaning process performed on the raw 
 
 ---
 
-## 2. 📈 `Exploring Data.sql`
+## 2. Exploring Data
 
-This script focuses on **exploratory data analysis (EDA)** using the cleaned `layoffs_staging2` table to find key layoff trends.
+## Table of Contents
 
-### Key Analysis Queries:
+1.  [Purpose](#purpose)
+2.  [Source Data](#source-data)
+3.  [Analysis Overview](#analysis-overview)
+4.  [Detailed Query Breakdown](#detailed-query-breakdown)
+    * [4.1 Summary Statistics](#41-summary-statistics)
+    * [4.2 Aggregations by Category](#42-aggregations-by-category)
+    * [4.3 Time Series Analysis](#43-time-series-analysis)
+    * [4.4 Rolling Total Calculation](#44-rolling-total-calculation)
 
-| Query Type | Description |
+---
+
+## 1. Purpose
+
+This SQL script contains a series of exploratory queries designed to understand the structure, scale, and trends within the `layoffs_staging2` table.
+
+The primary goals of this analysis are to:
+* Identify the **maximum impact** (total layoffs and highest percentage laid off) observed in the dataset.
+* Determine the **top entities** (companies and countries) contributing to the total number of layoffs.
+* Establish **layoff trends over time** by year and month, including a cumulative running total.
+* Analyze the **impact of layoffs by industry**.
+
+## 2. Source Data
+
+* **Table:** `layoffs_staging2`
+* **Context:** This table is assumed to be a cleaned and pre-processed version of the raw layoff data, ready for aggregation.
+
+---
+
+## 3. Analysis Overview
+
+The queries focus on aggregation functions (`SUM`, `MAX`) and time-series manipulation (`YEAR`, `SUBSTRING`) to transform individual layoff events into key business insights. The use of a **Common Table Expression (CTE)** demonstrates advanced window function capabilities for calculating cumulative totals.
+
+---
+
+## 4. Detailed Query Breakdown
+
+### 4.1 Summary Statistics
+
+| Query | Description |
 | :--- | :--- |
-| **Summary Statistics** | Finds the maximum number and maximum percentage of total layoffs. |
-| **Top Companies** | Calculates the **total number of employees laid off** by each company and ranks them in descending order. |
-| **Yearly Trends** | Calculates the total number of layoffs aggregated by the **year**. |
-| **Monthly Trends** | Calculates the total number of layoffs aggregated by **month** (`YYYY-MM`). |
-| **Rolling Totals (Time Series)** | Uses a **Common Table Expression (CTE)** and a **window function** (`SUM() OVER(ORDER BY MONTH)`) to calculate a running (cumulative) total of laid-off employees over time. |
+| `SELECT * FROM layoffs_staging2;` | Basic check to preview the entire dataset structure and confirm column names/types. |
+| `SELECT MAX(total_laid_off), MAX(percentage_laid_off) FROM layoffs_staging2;` | Identifies the single largest number of people laid off in any one event and the highest percentage of a company's staff laid off in one event. |
 
+### 4.2 Aggregations by Category
 
+| Query | Description |
+| :--- | :--- |
+| `SELECT company, SUM(total_laid_off)...` | **Top Companies:** Aggregates total layoffs by company, ordered from highest to lowest impact. This is used to identify the top contributors to overall layoff numbers. |
+| `SELECT country, SUM(total_laid_off)...` | **Top Countries:** Aggregates total layoffs by country, filtering out null values to ensure accuracy. This is used to identify geographical layoff hotspots. |
+| `SELECT industry, TRUNCATE(SUM(percentage_laid_off),2)...` | **Industry Impact:** Calculates the sum of `percentage_laid_off` by industry, truncated to two decimal places, ordered by impact. This provides a different view of impact compared to raw counts. |
+
+### 4.3 Time Series Analysis
+
+| Query | Description |
+| :--- | :--- |
+| `SELECT YEAR(\`date\`), SUM(total_laid_off)...` | **Yearly Trend:** Calculates the total layoffs for each year present in the dataset, ordered descending by year to show recent trends first. |
+| `SELECT SUBSTRING(\`date\`, 1, 7) AS \`MONTH\`, SUM(total_laid_off)...` | **Monthly Trend:** Extracts the year and month (e.g., "YYYY-MM") and calculates the total layoffs for each month, ordered chronologically. This is the base data for the Rolling Total calculation. |
+
+### 4.4 Rolling Total Calculation
+
+| Query | Description |
+| :--- | :--- |
+| `WITH Rolling_Total AS (...) SELECT \`MONTH\`, Total_off, SUM(total_off) OVER(...)` | **Cumulative Layoffs:** Uses a **Common Table Expression (CTE)** (`Rolling_Total`) and a **Window Function** (`SUM() OVER(...)`) to calculate the running total of layoffs month-over-month. This is crucial for visualizing the total cumulative impact over the dataset's timeline. |
