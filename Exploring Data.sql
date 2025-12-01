@@ -11,6 +11,12 @@ FROM layoffs_staging2
 GROUP BY company
 ORDER BY 2 DESC; -- Number 2 is the second column in SELECT so 'SUM(total_laid_off)'
 
+SELECT country, SUM(total_laid_off)
+FROM layoffs_staging2
+WHERE total_laid_off IS NOT NULL
+GROUP BY country
+ORDER BY 2 DESC;
+
 SELECT YEAR(`date`), SUM(total_laid_off)
 FROM layoffs_staging2
 GROUP BY YEAR(`date`)
@@ -33,3 +39,9 @@ ORDER BY 1 ASC
 SELECT `MONTH`, Total_off,
 SUM(total_off) OVER(ORDER BY `MONTH`) AS `Rolling_Total`
 FROM Rolling_total;
+
+SELECT industry, TRUNCATE(SUM(percentage_laid_off),2)
+FROM layoffs_staging2
+WHERE industry IS NOT NULL
+GROUP BY industry
+ORDER BY 2 DESC
