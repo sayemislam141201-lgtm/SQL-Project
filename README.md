@@ -1,4 +1,4 @@
-This repository contains two SQL scripts that document the process of cleaning, and exploring a dataset job layoffs.
+This repository contains two SQL scripts that document the process of cleaning, and exploring a dataset on job layoffs.
 
 The primary goal of this analysis is to identify trends in job cuts across different companies, industries, and time periods.
 
